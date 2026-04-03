@@ -2,13 +2,35 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>e-ID</title>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial;
-  background: #f2f2f2;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f2f4f7;
+}
+
+/* LOCK SCREEN */
+#lockScreen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.pin-input {
+  padding: 10px;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 5px;
 }
 
 /* HEADER */
@@ -20,14 +42,15 @@ body {
   border-bottom: 1px solid #ddd;
 }
 
-.menu {
-  font-size: 22px;
+.header img {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
   margin-right: 10px;
 }
 
-.header img {
-  width: 40px;
-  border-radius: 6px;
+.menu {
+  font-size: 22px;
   margin-right: 10px;
 }
 
@@ -44,8 +67,10 @@ body {
 }
 
 .tab {
-  padding: 10px;
-  color: gray;
+  padding: 12px;
+  font-size: 13px;
+  color: #777;
+  transition: 0.2s;
 }
 
 .active {
@@ -56,36 +81,49 @@ body {
 /* CARD */
 .card {
   background: white;
-  margin: 20px;
+  margin: 15px;
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 18px;
   text-align: center;
+  animation: fade 0.3s;
 }
 
-.card img {
-  width: 130px;
+@keyframes fade {
+  from {opacity:0; transform: translateY(10px);}
+  to {opacity:1; transform: translateY(0);}
+}
+
+/* IMAGE */
+.profile-img {
+  width: 140px;
+  height: 170px;
+  object-fit: cover;
   border-radius: 10px;
 }
 
-h2 {
-  margin: 10px 0 5px;
-}
+/* TEXT */
+h2 { margin: 10px 0 5px; }
 
+.sub { color: #777; }
+
+/* INFO */
 .info {
-  text-align: left;
   margin-top: 20px;
 }
 
-.info p {
-  margin: 8px 0;
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid #eee;
 }
 
-/* BUTTONS */
+/* BUTTON */
 button {
-  padding: 10px;
   margin-top: 10px;
+  padding: 10px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #00a8a8;
   color: white;
 }
@@ -94,8 +132,9 @@ button {
 .section { display: none; }
 .show { display: block; }
 
+/* INPUT */
 input {
-  width: 90%;
+  width: 95%;
   padding: 8px;
   margin: 5px;
 }
@@ -104,44 +143,48 @@ input {
 
 <body>
 
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+  <h2>Enter PIN</h2>
+  <input type="password" maxlength="4" id="pin" class="pin-input">
+  <button onclick="unlock()">Unlock</button>
+</div>
+
 <!-- HEADER -->
 <div class="header">
   <div class="menu">☰</div>
-  <img src="https://via.placeholder.com/40">
+  <img src="profile.jpg">
   <div class="header-text">
     <b id="miniName"></b><br>
-    <small id="miniId">0388308L</small>
+    <small>Simiana<br>0388308L</small>
   </div>
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('info', this)">My Info</div>
-  <div class="tab" onclick="switchTab('privacy', this)">Privacy & Security</div>
-  <div class="tab" onclick="switchTab('help', this)">Help</div>
+  <div class="tab active" onclick="tab('info',this)">MY INFO</div>
+  <div class="tab" onclick="tab('privacy',this)">PRIVACY</div>
+  <div class="tab" onclick="tab('help',this)">HELP</div>
 </div>
 
 <!-- INFO -->
 <div id="info" class="section show">
   <div class="card">
-    <img src="https://via.placeholder.com/130">
+    <img src="profile.jpg" class="profile-img">
 
     <h2 id="name"></h2>
-    <p id="dob"></p>
+    <div class="sub" id="dob"></div>
 
     <div class="info">
-      <p><b>Email:</b> <span id="email"></span></p>
-      <p><b>Phone:</b> <span id="phone"></span></p>
+      <div class="row"><span>Email</span><span id="email"></span></div>
+      <div class="row"><span>Phone</span><span id="phone"></span></div>
     </div>
 
-    <button onclick="toggleEdit()">Edit</button>
+    <button onclick="edit()">Edit</button>
     <button onclick="location.reload()">Refresh</button>
 
     <div id="editBox" style="display:none;">
-      <input id="editName">
-      <input id="editDob">
-      <input id="editEmail">
-      <input id="editPhone">
+      <input id="e1"><input id="e2"><input id="e3"><input id="e4">
       <button onclick="save()">Save</button>
     </div>
   </div>
@@ -151,10 +194,7 @@ input {
 <div id="privacy" class="section">
   <div class="card">
     <h2>Privacy & Security</h2>
-    <p>Manage your data and account security.</p>
-    <button onclick="localStorage.clear(); location.reload();">
-      Clear Data
-    </button>
+    <button onclick="localStorage.clear();location.reload()">Clear Data</button>
   </div>
 </div>
 
@@ -162,54 +202,60 @@ input {
 <div id="help" class="section">
   <div class="card">
     <h2>Help</h2>
-    <p>If something isn’t working, refresh the app.</p>
+    <p>Use refresh if something breaks.</p>
   </div>
 </div>
 
 <script>
 const data = JSON.parse(localStorage.getItem("data")) || {
-  name: "Jake Fasanelli Simiana",
-  dob: "11/11/2008",
-  email: "example@gmail.com",
-  phone: "+356 77007622"
+  name:"Jake Fasanelli Simiana",
+  dob:"11/11/2008",
+  email:"example@gmail.com",
+  phone:"+356 77007622"
 };
 
-function load() {
-  name.innerText = data.name;
-  dob.innerText = data.dob;
-  email.innerText = data.email;
-  phone.innerText = data.phone;
-  miniName.innerText = data.name;
+function load(){
+  name.innerText=data.name;
+  dob.innerText=data.dob;
+  email.innerText=data.email;
+  phone.innerText=data.phone;
+  miniName.innerText=data.name;
 
-  editName.value = data.name;
-  editDob.value = data.dob;
-  editEmail.value = data.email;
-  editPhone.value = data.phone;
+  e1.value=data.name;
+  e2.value=data.dob;
+  e3.value=data.email;
+  e4.value=data.phone;
 }
 
-function toggleEdit() {
-  editBox.style.display =
-    editBox.style.display === "none" ? "block" : "none";
+function tab(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('show');
+  el.classList.add('active');
 }
 
-function save() {
-  const newData = {
-    name: editName.value,
-    dob: editDob.value,
-    email: editEmail.value,
-    phone: editPhone.value
+function edit(){
+  editBox.style.display = editBox.style.display==='none'?'block':'none';
+}
+
+function save(){
+  const newData={
+    name:e1.value,
+    dob:e2.value,
+    email:e3.value,
+    phone:e4.value
   };
-
-  localStorage.setItem("data", JSON.stringify(newData));
+  localStorage.setItem("data",JSON.stringify(newData));
   location.reload();
 }
 
-function switchTab(id, el) {
-  document.querySelectorAll(".section").forEach(s => s.classList.remove("show"));
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-
-  document.getElementById(id).classList.add("show");
-  el.classList.add("active");
+/* LOCK SCREEN */
+function unlock(){
+  if(pin.value==="1111"){ // change PIN here
+    lockScreen.style.display="none";
+  } else {
+    alert("Wrong PIN");
+  }
 }
 
 load();
