@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>e-ID</title>
+<title>My ID</title>
 
 <style>
 body {
@@ -12,8 +11,81 @@ body {
   background: #f2f4f7;
 }
 
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.header img {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+/* PROFILE */
+.profile {
+  text-align: center;
+  padding: 25px 20px 10px;
+}
+
+.profile img {
+  width: 140px;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2 {
+  margin: 12px 0 5px;
+}
+
+/* INFO SECTIONS */
+.section {
+  background: white;
+  margin: 12px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+/* BUTTON */
+button {
+  width: 90%;
+  margin: 15px auto;
+  display: block;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #00a8a8;
+  color: white;
+  font-size: 15px;
+}
+
+input {
+  width: 90%;
+  margin: 5px auto;
+  display: block;
+  padding: 10px;
+}
+
 /* LOCK SCREEN */
-#lockScreen {
+#lock {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -23,187 +95,43 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 999;
-}
-
-.pin-input {
-  padding: 10px;
-  font-size: 20px;
-  text-align: center;
-  letter-spacing: 5px;
-}
-
-/* HEADER */
-.header {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  background: white;
-  border-bottom: 1px solid #ddd;
-}
-
-.header img {
-  width: 42px;
-  height: 42px;
-  border-radius: 6px;
-  margin-right: 10px;
-}
-
-.menu {
-  font-size: 22px;
-  margin-right: 10px;
-}
-
-.header-text {
-  font-size: 14px;
-}
-
-/* TABS */
-.tabs {
-  display: flex;
-  justify-content: space-around;
-  background: white;
-  border-bottom: 1px solid #ddd;
-}
-
-.tab {
-  padding: 12px;
-  font-size: 13px;
-  color: #777;
-  transition: 0.2s;
-}
-
-.active {
-  color: #00a8a8;
-  border-bottom: 3px solid #00a8a8;
-}
-
-/* CARD */
-.card {
-  background: white;
-  margin: 15px;
-  padding: 20px;
-  border-radius: 18px;
-  text-align: center;
-  animation: fade 0.3s;
-}
-
-@keyframes fade {
-  from {opacity:0; transform: translateY(10px);}
-  to {opacity:1; transform: translateY(0);}
-}
-
-/* IMAGE */
-.profile-img {
-  width: 140px;
-  height: 170px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-/* TEXT */
-h2 { margin: 10px 0 5px; }
-
-.sub { color: #777; }
-
-/* INFO */
-.info {
-  margin-top: 20px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-top: 1px solid #eee;
-}
-
-/* BUTTON */
-button {
-  margin-top: 10px;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: #00a8a8;
-  color: white;
-}
-
-/* SECTIONS */
-.section { display: none; }
-.show { display: block; }
-
-/* INPUT */
-input {
-  width: 95%;
-  padding: 8px;
-  margin: 5px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOCK SCREEN -->
-<div id="lockScreen">
+<div id="lock">
   <h2>Enter PIN</h2>
-  <input type="password" maxlength="4" id="pin" class="pin-input">
+  <input type="password" id="pin">
   <button onclick="unlock()">Unlock</button>
 </div>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="menu">☰</div>
   <img src="profile.jpg">
-  <div class="header-text">
+  <div>
     <b id="miniName"></b><br>
-    <small>Simiana<br>0388308L</small>
+    <small>0388308L</small>
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" onclick="tab('info',this)">MY INFO</div>
-  <div class="tab" onclick="tab('privacy',this)">PRIVACY</div>
-  <div class="tab" onclick="tab('help',this)">HELP</div>
+<div class="profile">
+  <img src="profile.jpg">
+  <h2 id="name"></h2>
+  <div id="dob" style="color:#777;"></div>
 </div>
 
-<!-- INFO -->
-<div id="info" class="section show">
-  <div class="card">
-    <img src="profile.jpg" class="profile-img">
-
-    <h2 id="name"></h2>
-    <div class="sub" id="dob"></div>
-
-    <div class="info">
-      <div class="row"><span>Email</span><span id="email"></span></div>
-      <div class="row"><span>Phone</span><span id="phone"></span></div>
-    </div>
-
-    <button onclick="edit()">Edit</button>
-    <button onclick="location.reload()">Refresh</button>
-
-    <div id="editBox" style="display:none;">
-      <input id="e1"><input id="e2"><input id="e3"><input id="e4">
-      <button onclick="save()">Save</button>
-    </div>
-  </div>
+<div class="section">
+  <div class="row"><span>Email</span><span id="email"></span></div>
+  <div class="row"><span>Phone</span><span id="phone"></span></div>
 </div>
 
-<!-- PRIVACY -->
-<div id="privacy" class="section">
-  <div class="card">
-    <h2>Privacy & Security</h2>
-    <button onclick="localStorage.clear();location.reload()">Clear Data</button>
-  </div>
-</div>
+<button onclick="edit()">Edit</button>
+<button onclick="location.reload()">Refresh</button>
 
-<!-- HELP -->
-<div id="help" class="section">
-  <div class="card">
-    <h2>Help</h2>
-    <p>Use refresh if something breaks.</p>
-  </div>
+<div id="editBox" style="display:none;">
+  <input id="e1"><input id="e2"><input id="e3"><input id="e4">
+  <button onclick="save()">Save</button>
 </div>
 
 <script>
@@ -227,13 +155,6 @@ function load(){
   e4.value=data.phone;
 }
 
-function tab(id,el){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('show'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(id).classList.add('show');
-  el.classList.add('active');
-}
-
 function edit(){
   editBox.style.display = editBox.style.display==='none'?'block':'none';
 }
@@ -249,10 +170,9 @@ function save(){
   location.reload();
 }
 
-/* LOCK SCREEN */
 function unlock(){
-  if(pin.value==="1111"){ // change PIN here
-    lockScreen.style.display="none";
+  if(pin.value==="1111"){
+    lock.style.display="none";
   } else {
     alert("Wrong PIN");
   }
