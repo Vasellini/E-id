@@ -1,40 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>ID Profile</title>
+<title>e-ID</title>
 
 <style>
 body {
   margin: 0;
   font-family: Arial;
-  background: #f5f5f5;
+  background: #f2f2f2;
 }
 
 /* HEADER */
 .header {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   background: white;
   border-bottom: 1px solid #ddd;
 }
 
 .menu {
-  font-size: 24px;
+  font-size: 22px;
   margin-right: 10px;
-  cursor: pointer;
 }
 
-.profile-mini {
-  display: flex;
-  align-items: center;
-}
-
-.profile-mini img {
+.header img {
   width: 40px;
-  border-radius: 5px;
+  border-radius: 6px;
   margin-right: 10px;
+}
+
+.header-text {
+  font-size: 14px;
 }
 
 /* TABS */
@@ -42,58 +40,60 @@ body {
   display: flex;
   justify-content: space-around;
   background: white;
-  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
 .tab {
-  text-align: center;
-  cursor: pointer;
+  padding: 10px;
   color: gray;
 }
 
-.tab.active {
+.active {
   color: #00a8a8;
   border-bottom: 3px solid #00a8a8;
 }
 
-/* CONTENT */
-.section {
-  display: none;
-  padding: 20px;
-}
-
-.section.active {
-  display: block;
-}
-
-/* PROFILE CARD */
+/* CARD */
 .card {
   background: white;
+  margin: 20px;
   padding: 20px;
   border-radius: 15px;
   text-align: center;
 }
 
 .card img {
-  width: 120px;
+  width: 130px;
   border-radius: 10px;
 }
 
-.info-row {
-  margin-top: 15px;
+h2 {
+  margin: 10px 0 5px;
 }
 
+.info {
+  text-align: left;
+  margin-top: 20px;
+}
+
+.info p {
+  margin: 8px 0;
+}
+
+/* BUTTONS */
 button {
-  margin-top: 15px;
   padding: 10px;
+  margin-top: 10px;
   border: none;
   border-radius: 8px;
   background: #00a8a8;
   color: white;
-  cursor: pointer;
 }
 
-/* INPUTS */
+/* SECTIONS */
+.section { display: none; }
+.show { display: block; }
+
 input {
   width: 90%;
   padding: 8px;
@@ -107,44 +107,42 @@ input {
 <!-- HEADER -->
 <div class="header">
   <div class="menu">☰</div>
-  <div class="profile-mini">
-    <img id="miniPic" src="https://via.placeholder.com/40">
-    <div>
-      <div id="miniName"></div>
-      <small id="miniId">0388308L</small>
-    </div>
+  <img src="https://via.placeholder.com/40">
+  <div class="header-text">
+    <b id="miniName"></b><br>
+    <small id="miniId">0388308L</small>
   </div>
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="showTab('info')">My Info</div>
-  <div class="tab" onclick="showTab('privacy')">Privacy & Security</div>
-  <div class="tab" onclick="showTab('help')">Help</div>
+  <div class="tab active" onclick="switchTab('info', this)">My Info</div>
+  <div class="tab" onclick="switchTab('privacy', this)">Privacy & Security</div>
+  <div class="tab" onclick="switchTab('help', this)">Help</div>
 </div>
 
-<!-- MY INFO -->
-<div id="info" class="section active">
+<!-- INFO -->
+<div id="info" class="section show">
   <div class="card">
-    <img id="profilePic" src="https://via.placeholder.com/120">
+    <img src="https://via.placeholder.com/130">
 
     <h2 id="name"></h2>
     <p id="dob"></p>
 
-    <div class="info-row">
-      <p id="email"></p>
-      <p id="phone"></p>
+    <div class="info">
+      <p><b>Email:</b> <span id="email"></span></p>
+      <p><b>Phone:</b> <span id="phone"></span></p>
     </div>
 
     <button onclick="toggleEdit()">Edit</button>
-    <button onclick="refreshPage()">Refresh</button>
+    <button onclick="location.reload()">Refresh</button>
 
-    <div id="editForm" style="display:none;">
-      <input id="editName" placeholder="Name">
-      <input id="editDob" placeholder="DOB">
-      <input id="editEmail" placeholder="Email">
-      <input id="editPhone" placeholder="Phone">
-      <button onclick="saveData()">Save</button>
+    <div id="editBox" style="display:none;">
+      <input id="editName">
+      <input id="editDob">
+      <input id="editEmail">
+      <input id="editPhone">
+      <button onclick="save()">Save</button>
     </div>
   </div>
 </div>
@@ -153,8 +151,10 @@ input {
 <div id="privacy" class="section">
   <div class="card">
     <h2>Privacy & Security</h2>
-    <p>You can manage your data here.</p>
-    <button onclick="clearData()">Clear Saved Data</button>
+    <p>Manage your data and account security.</p>
+    <button onclick="localStorage.clear(); location.reload();">
+      Clear Data
+    </button>
   </div>
 </div>
 
@@ -162,71 +162,57 @@ input {
 <div id="help" class="section">
   <div class="card">
     <h2>Help</h2>
-    <p>If something isn’t working, refresh the page or contact support.</p>
+    <p>If something isn’t working, refresh the app.</p>
   </div>
 </div>
 
 <script>
-const defaultData = {
+const data = JSON.parse(localStorage.getItem("data")) || {
   name: "Jake Fasanelli Simiana",
   dob: "11/11/2008",
   email: "example@gmail.com",
   phone: "+356 77007622"
 };
 
-function loadData() {
-  const data = JSON.parse(localStorage.getItem("profile")) || defaultData;
+function load() {
+  name.innerText = data.name;
+  dob.innerText = data.dob;
+  email.innerText = data.email;
+  phone.innerText = data.phone;
+  miniName.innerText = data.name;
 
-  document.getElementById("name").innerText = data.name;
-  document.getElementById("dob").innerText = data.dob;
-  document.getElementById("email").innerText = data.email;
-  document.getElementById("phone").innerText = data.phone;
-
-  document.getElementById("miniName").innerText = data.name;
-
-  document.getElementById("editName").value = data.name;
-  document.getElementById("editDob").value = data.dob;
-  document.getElementById("editEmail").value = data.email;
-  document.getElementById("editPhone").value = data.phone;
+  editName.value = data.name;
+  editDob.value = data.dob;
+  editEmail.value = data.email;
+  editPhone.value = data.phone;
 }
 
 function toggleEdit() {
-  const form = document.getElementById("editForm");
-  form.style.display = form.style.display === "none" ? "block" : "none";
+  editBox.style.display =
+    editBox.style.display === "none" ? "block" : "none";
 }
 
-function saveData() {
-  const data = {
+function save() {
+  const newData = {
     name: editName.value,
     dob: editDob.value,
     email: editEmail.value,
     phone: editPhone.value
   };
 
-  localStorage.setItem("profile", JSON.stringify(data));
-  loadData();
-  toggleEdit();
-}
-
-function showTab(tab) {
-  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-
-  document.getElementById(tab).classList.add("active");
-  event.target.classList.add("active");
-}
-
-function refreshPage() {
+  localStorage.setItem("data", JSON.stringify(newData));
   location.reload();
 }
 
-function clearData() {
-  localStorage.removeItem("profile");
-  loadData();
-  alert("Data cleared");
+function switchTab(id, el) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("show"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+  document.getElementById(id).classList.add("show");
+  el.classList.add("active");
 }
 
-loadData();
+load();
 </script>
 
 </body>
